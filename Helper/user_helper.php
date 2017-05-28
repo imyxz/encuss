@@ -7,10 +7,58 @@
  */
 class user_helper extends SlimvcHelper
 {
+    private $user_id;
     private $user_info;
-
+    private $is_login;
     function __construct()
     {
-        $this->i=100;
+        $this->user_id=$this->helper("session_helper")->get("user_id");
+        if(empty($this->user_id))
+        {
+            $this->user_id=0;
+            $this->is_login=false;
+            $this->user_info=array();
+        }
+        else
+        {
+            $this->is_login=true;
+            $this->user_info=$this->model("user_model")->getUserInfo($this->user_id);
+        }
+    }
+    function getUserInfo()
+    {
+        return $this->user_info;
+    }
+    function isLogin()
+    {
+        return $this->is_login;
+    }
+    function newUser($username,$password,$email,$nickname,$reg_ip)
+    {
+        return $this->model("user_model")->newUser($username,$password,$email,$nickname,$reg_ip);
+    }
+    function checkUserPassword($username,$password)
+    {
+        return $this->model("user_model")->checkUserPassword($username,$password);
+    }
+    function loginUser($userid)
+    {
+        $this->helper("session_helper")->set("user_id",$userid);
+        $this->is_login=true;
+        $this->user_id=$userid;
+        $this->user_info=$this->model("user_model")->getUserInfo($userid);
+    }
+    function logoutUser($userid=0)
+    {
+
+        if($userid==0)
+            $userid=$this->user_id;
+        if($this->is_login=true && $userid>0)
+        {
+            $this->helper("session_helper")->destroySession();
+            $this->user_id=0;
+            $this->is_login=false;
+            $this->user_info=array();
+        }
     }
 }

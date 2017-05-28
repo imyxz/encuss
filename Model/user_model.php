@@ -13,10 +13,14 @@ class user_model extends SlimvcModel
 
     function checkUserPassword($username,$password)
     {
-        return $this->queryStmt("select user_id from user_info WHERE user_name=? and user_password=? limit 1",
+        $row=$this->queryStmt("select user_id from user_info WHERE user_name=? and user_password=? limit 1",
             "ss",
             $username,
-            $password)->sum() >=1 ;
+            $password)->row();
+        if($row)
+            return $row['user_id'];
+        else
+            return false;
     }
 
 
@@ -39,7 +43,7 @@ class user_model extends SlimvcModel
 
     function newUser($username,$password,$email,$nickname,$reg_ip)
     {
-        if(!$this->queryStmt("insert into user_info set user_name=?,user_password=?,user_nickname=?,user_email=?,reg_time=now(),login_time=now(),reg_ip=?",
+        if(!$this->queryStmt("insert into user_info set user_name=?,user_password=?,user_nickname=?,user_email=?,reg_time=now(),login_time=now(),reg_ip=?,user_avatar=''",
             "sssss",
             $username,
             $password,

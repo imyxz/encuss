@@ -8,22 +8,55 @@
 class session_helper extends SlimvcHelper
 {
     private $session_info=array();
-    private $session_id;
-    private $seesion_key;
+    private $session_id;//如果为0则无效
+    private $session_key;
     const SESSION_MINUTE=60*24*30;//一个月
     function __construct()
     {
-        if(!($tmp=$this->getSession()))
-        {
+        if (!($tmp = $this->getSession())) {
             $this->delAllSessionCookie();
-            $this->session_info['user_id']=0;
-            $this->seesion_key=$this->getRandMd5();
-            $this->session_id=$this->model("session_model")->newSession($this->seesion_key,self::SESSION_MINUTE);
+            $this->session_info=array();
+            $this->session_key = $this->getRandMd5();
+            $this->session_id = $this->model("session_model")->newSession($this->session_key, self::SESSION_MINUTE);
+            $this->updateSessionInfo();
         }
+        else
+        {
+            $this->session_info=json_decode($tmp['session_info'],true);
+            $this->session_id=$tmp['session_id'];
+            $this->session_key=$tmp['session_pass'];
+        }
+        $this->updateSessionCookieTime();
+
+    }
+    function __destruct()
+    {
+        if(isset($this->session_id) && $this->session_id>0)
+            $this->updateSessionInfo();
     }
     function updateSessionInfo()
     {
         $this->model("session_model")->updateSessionInfo($this->session_id,json_encode($this->session_info),self::SESSION_MINUTE);
+    }
+    function destroySession()
+    {
+        $this->delAllSessionCookie();
+        $this->model("session_model")->delSession($this->session_id);
+        $this->session_info=array();
+        $this->session_id=0;
+    }
+    function get($key)
+    {
+        if(isset($this->session_info[$key]))    return $this->session_info[$key];
+        else    return false;
+    }
+    function set($key,$value)
+    {
+        $this->session_info[$key]=$value;
+    }
+    function &getSessionInfo()
+    {
+        return $this->session_info;
     }
     private function delAllSessionCookie()
     {
@@ -31,18 +64,33 @@ class session_helper extends SlimvcHelper
         {
             if(substr($key,0,15)=='encuss_session_')
             {
-                setcookie($key,0,1);
+                setcookie($key,'',1,'/');
             }
         }
     }
+    private function updateSessionCookieTime()
+    {
+        setcookie('encuss_session_' . $this->session_id,$this->session_key,time()+60*self::SESSION_MINUTE,'/');
+        $this->model("session_model")->renewSessionTime($this->session_id,self::SESSION_MINUTE);
+    }
     private function getSession()
+    {
+        $session=$this->getCookieSession();
+        if(!$session)
+            return false;
+        $session_info=$this->model("session_model")->getSessionInfo(intval($session['id']));
+        if(!$session_info || $session_info['session_pass']!=$session['key'])
+            return false;
+        return $session_info;
+    }
+    private function getCookieSession()
     {
         foreach($_COOKIE as $key => &$value)
         {
             if(substr($key,0,15)=='encuss_session_')
             {
-                return array("id"=>intval(substr($key,9)),
-                    "key"=>$_COOKIE['encuss_session_' . $key]);
+                return array("id"=>intval(substr($key,15)),
+                    "key"=>$_COOKIE[$key]);
             }
         }
         return false;

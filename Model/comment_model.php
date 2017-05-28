@@ -9,7 +9,7 @@ class comment_model extends SlimvcModel
 {
     function getPostComments($post_id,$start,$count)
     {
-        return $this->queryStmt("select * from comment_info where post_id=? order by comment_id desc limit ?,?",
+        return $this->queryStmt("select comment_info.*,user_info.user_id,user_info.user_nickname,user_info.user_avatar from comment_info,user_info where comment_info.post_id=? and user_info.user_id=comment_info.comment_user_id  order by comment_info.comment_id desc limit ?,?",
             "iii",
             $post_id,
             $start,
