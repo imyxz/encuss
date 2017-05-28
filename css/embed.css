@@ -14,18 +14,21 @@
     position:relative;
     padding:0;
     padding-top:10px;
-    padding-bottom:10px;
     min-height: 60px;
     transition-duration: 0.5s;
 }
 .encuss-comments-node:hover{
     background-color: ghostwhite;
 }
-.encuss-comments-node:nth-last-child(1)
+.encuss-comments > .encuss-comments-node:nth-last-child(1)/*ÊÊÅäÇ¶Ì×»Ø¸´*/
 {
     border-bottom-style: solid;
     border-bottom-width: 1px;
     border-bottom-color: rgba(0, 0, 0, 0.13);
+}
+.encuss-comments > .encuss-comments-node/*ÊÊÅäÇ¶Ì×»Ø¸´*/
+{
+    padding-bottom:10px;
 }
 .encuss-avatar{
     width:50px;
@@ -49,6 +52,15 @@
     font-size:13px;
     word-wrap:break-word;
     line-height: 15px;
+}
+
+.encuss-comment-content-reply
+{
+    display:block;
+    font-size:13px;
+    word-wrap:break-word;
+    line-height: 15px;
+    background-color: lightyellow;
 }
 .encuss-comment-time
 {
@@ -75,6 +87,11 @@
     margin-left:65px;
 }
 .encuss-comments-node > .encuss-comment-content
+{
+    margin-left:65px;
+    margin-top:10px;
+}
+.encuss-comments-node > .encuss-comment-content-reply
 {
     margin-left:65px;
     margin-top:10px;
