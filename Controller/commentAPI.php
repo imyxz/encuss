@@ -39,6 +39,7 @@ class commentAPI extends SlimvcController{
     function getPostReplys()
     {
         $return=array();
+        header('Cache-control: private, must-revalidate');
         try{
             if(!$this->helper("user_helper")->isLogin())
                 $return['isLogin']=false;

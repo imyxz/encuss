@@ -48,6 +48,10 @@ class user_helper extends SlimvcHelper
         $this->user_id=$userid;
         $this->user_info=$this->model("user_model")->getUserInfo($userid);
     }
+    function loginByQQ($open_id,$access_token,$expires_in,$refresh_token,$info)
+    {
+
+    }
     function logoutUser($userid=0)
     {
 

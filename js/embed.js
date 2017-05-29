@@ -23,6 +23,7 @@ function encussInit()
     loadSmiles();
     var ajax=new XMLHttpRequest();
     ajax.open("GET",encuss_basic_url+"commentAPI/getPostReplys/site_id/" + site_id + "/site_post_id/" +site_post_id,true);
+    ajax.withCredentials=true;
     ajax.onreadystatechange=function(){
         if (ajax.readyState==4 && ajax.status==200) {
             var comment = document.createElement("div");
@@ -79,6 +80,7 @@ function loadSmiles()
 {
     var ajax=new XMLHttpRequest();
     ajax.open("GET",encuss_basic_url+"resource/smiles/smiles.json",false);
+    ajax.withCredentials=true;
     ajax.onreadystatechange=function(){
         if (ajax.readyState==4 && ajax.status==200) {
             var response = JSON.parse(ajax.responseText);
@@ -219,6 +221,7 @@ function postComment(parent_id,content,replyboxNode)
     json_obj.content=content;
     json_obj.parent_id=parent_id;
     ajax.open("POST",encuss_basic_url+"commentAPI/newReply",true);
+    ajax.withCredentials=true;
     ajax.onreadystatechange=function(){
         if (ajax.readyState==4 && ajax.status==200)
         {

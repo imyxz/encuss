@@ -65,13 +65,13 @@ class session_helper extends SlimvcHelper
         {
             if(substr($key,0,15)=='encuss_session_')
             {
-                setcookie($key,'',1,'/',".yxz.me");
+                setcookie($key,'',1,'/');
             }
         }
     }
     private function updateSessionCookieTime()
     {
-        setcookie('encuss_session_' . $this->session_id,$this->session_key,time()+60*self::SESSION_MINUTE,'/',".yxz.me");
+        setcookie('encuss_session_' . $this->session_id,$this->session_key,time()+60*self::SESSION_MINUTE,'/');
         $this->model("session_model")->renewSessionTime($this->session_id,self::SESSION_MINUTE);
     }
     private function getSession()
