@@ -10,15 +10,19 @@ var user_avatar;
 var isLogin=false;
 var encuss_sub_replybox;
 var encuss_allreplys=new Object();
+var encuss_smiles=new Object();
+var encuss_basic_url="http://encuss.yxz.me/";
+var encuss_smiles_selector;
 encussInit();
 function encussInit()
 {
-    includeCss("http://localhost/encuss/css/embed.css");
+    includeCss(encuss_basic_url+"css/embed.css");
     site_id=encussConfig.site_id;
     var encuss=document.getElementsByClassName("encuss-div")[0];
     site_post_id=encuss.dataset['postId'];
+    loadSmiles();
     var ajax=new XMLHttpRequest();
-    ajax.open("GET","http://localhost/encuss/commentAPI/getPostReplys/site_id/" + site_id + "/site_post_id/" +site_post_id,true);
+    ajax.open("GET",encuss_basic_url+"commentAPI/getPostReplys/site_id/" + site_id + "/site_post_id/" +site_post_id,true);
     ajax.onreadystatechange=function(){
         if (ajax.readyState==4 && ajax.status==200) {
             var comment = document.createElement("div");
@@ -54,17 +58,75 @@ function encussInit()
             }
 
             encuss.appendChild(comment);
-            encuss.appendChild(createReplyBox(0));
+            if(isLogin)
+                encuss.appendChild(createReplyBox(0));
             encuss_comments=document.getElementsByClassName("encuss-div")[0].getElementsByClassName("encuss-comments")[0];
-
-            encuss_sub_replybox=createReplyBox(0);
+            if(isLogin)
+                encuss_sub_replybox=createReplyBox(0);
             encuss_sub_replybox.style.marginLeft="20px";
-
+            encuss_smiles_selector=createSmilesSelector();
+            document.body.appendChild(encuss_smiles_selector);
         }
     };
     ajax.send();
 
+
+
+
+
 }
+function loadSmiles()
+{
+    var ajax=new XMLHttpRequest();
+    ajax.open("GET",encuss_basic_url+"resource/smiles/smiles.json",false);
+    ajax.onreadystatechange=function(){
+        if (ajax.readyState==4 && ajax.status==200) {
+            var response = JSON.parse(ajax.responseText);
+            for(var index1 in response['bundle'])
+            {
+                for(var index2 in response['bundle'][index1]['smiles'])
+                {
+                    encuss_smiles[index1 + '_' + index2]=encuss_basic_url + response['bundle'][index1]['basic_path'] + response['bundle'][index1]['smiles'][index2];
+                }
+            }
+
+        }
+    };
+    ajax.send();
+}
+function processSmiles(innerHtml) {
+    var i=0;
+    var tmp;
+    while(i<innerHtml.length)
+    {
+        if(tmp=getSubStr(innerHtml,"{:",":}",i))
+        {
+            if(encuss_smiles.hasOwnProperty(tmp.str))
+            {
+                var addon_string="<img src='"+ encuss_smiles[tmp.str] +"' class='encuss-smiles-icon'/>";
+                innerHtml=innerHtml.substring(0,tmp.start-2) + addon_string +innerHtml.substr(tmp.end+3);
+                i=tmp.start-4 + addon_string.length;
+            }
+        }
+        i++;
+    }
+    return innerHtml;
+}
+function getSubStr(text,needle1,needle2,start)
+{
+    var pos1=text.indexOf(needle1,start);
+    if(pos1<0)
+        return false;
+    var pos2=text.indexOf(needle2,pos1+1);
+    if(pos2<0)
+        return false;
+    var ret=new Object();
+    ret.start=pos1+needle1.length;
+    ret.end=pos2-1;
+    ret.str=text.substring(ret.start,ret.end+1);
+    return ret;
+}
+
 function includeCss(url) {
     var link = document.createElement("link");
     link.rel = "stylesheet";
@@ -76,14 +138,14 @@ function createCommentNode(info)
 {
     var ele=document.createElement("div");
     ele.className="encuss-comments-node";
-    ele.innerHTML='<img class="encuss-avatar">\
+    ele.innerHTML='<img class="encuss-avatar" height="50px" width="50px">\
         <span class="encuss-username"></span>\
     <span class="encuss-comment-content-reply"></span>\
     <span class="encuss-comment-content"></span>\
     <span class="encuss-comment-time"></span>\
 <span class="encuss-comment-action">\
     <a href="javascript:void(0)" onclick="moveRelpyBox(this)">回复</a>\
-    <a href="#">顶</a>\
+    <a href="#"></a>\
     </span>';
     info.content_reply="";
     if(info.parent_id>0)
@@ -96,6 +158,10 @@ function createCommentNode(info)
         ele.getElementsByClassName("encuss-comment-content-reply")[0].innerText=info.content_reply;
     ele.getElementsByClassName("encuss-comment-content")[0].innerText=info.content;
     ele.getElementsByClassName("encuss-comment-time")[0].innerText=info.time;
+    //处理表情
+    ele.getElementsByClassName("encuss-comment-content")[0].innerHTML=processSmiles(ele.getElementsByClassName("encuss-comment-content")[0].innerHTML);
+    ele.getElementsByClassName("encuss-comment-content-reply")[0].innerHTML=processSmiles(ele.getElementsByClassName("encuss-comment-content-reply")[0].innerHTML);
+    //完毕
     ele.dataset.comment_id=info.comment_id;
     encuss_allreplys[info.comment_id].element=ele;
     return ele;
@@ -104,15 +170,36 @@ function createReplyBox(parent_id)
 {
     var ele=document.createElement("div");
     ele.className="encuss-replybox";
-    ele.innerHTML='    <img class="encuss-avatar">\
+    ele.innerHTML='    <img class="encuss-avatar" height="50px" width="50px">\
         <div class="encuss-replybox-area">\
     <label><textarea placeholder="说点什么吧......"></textarea></label>\
 </div>\
 <div class="encuss-replybox-action">\
+    <div class="encuss-reply-smiles-button"></div>\
     <button class="encuss-reply-button" onclick="submitComment(this)">发布</button>\
     </div>';
     ele.dataset.parent_id=parent_id;
+    ele.getElementsByClassName("encuss-reply-smiles-button")[0].addEventListener("click",moveSmilesSelector);
     ele.getElementsByClassName("encuss-avatar")[0].src=user_avatar;
+    return ele;
+}
+function createSmilesSelector()
+{
+    var ele=document.createElement("div");
+    ele.className="encuss-smiles-selector";
+    for(var index in encuss_smiles)
+    {
+        var smiles=document.createElement("img");
+        smiles.src=encuss_smiles[index];
+        smiles.dataset.smiles_name=index;
+        smiles.className="encuss-smiles-icon";
+        smiles.addEventListener("click",addSmiles);
+        ele.appendChild(smiles);
+    }
+    ele.style.display="none";
+    document.addEventListener("click",function(){
+        ele.style.display="none";
+    });
     return ele;
 }
 function submitComment(curObj)
@@ -131,7 +218,7 @@ function postComment(parent_id,content,replyboxNode)
     json_obj.post_id=post_id;
     json_obj.content=content;
     json_obj.parent_id=parent_id;
-    ajax.open("POST","http://localhost/encuss/commentAPI/newReply",true);
+    ajax.open("POST",encuss_basic_url+"commentAPI/newReply",true);
     ajax.onreadystatechange=function(){
         if (ajax.readyState==4 && ajax.status==200)
         {
@@ -191,4 +278,16 @@ function moveRelpyBox(curObj)
     else
         commentNode.insertBefore(encuss_sub_replybox,commentNode.getElementsByClassName("encuss-comments-node")[0])//保证刚好插在下面
     encuss_sub_replybox.style.display="block";
+}
+function moveSmilesSelector(e)
+{
+    encuss_smiles_selector.style.display="block";
+    this.parentNode.appendChild(encuss_smiles_selector);
+    e.stopPropagation();
+}
+function addSmiles(e)
+{
+    console.log(this.parentNode.parentNode);
+    var comment_box=this.parentNode.parentNode.parentNode.getElementsByClassName("encuss-replybox-area")[0].getElementsByTagName("textarea")[0];
+    comment_box.value=comment_box.value.substr(0,comment_box.selectionStart) + "{:" + this.dataset.smiles_name +":}" + comment_box.value.substring(comment_box.selectionStart);
 }

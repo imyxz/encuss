@@ -53,6 +53,13 @@ class user_model extends SlimvcModel
             return false;
         return $this->InsertId;
     }
+    function updateUserAvatar($user_id,$user_avatar)
+    {
+        return $this->queryStmt("update user_info set user_avatar=? where user_id=? limit 1",
+            "si",
+            $user_avatar,
+            $user_id);
+    }
 
 
 

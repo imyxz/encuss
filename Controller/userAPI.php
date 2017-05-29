@@ -11,12 +11,12 @@ class userAPI extends SlimvcController
     {
         try{
             if($this->helper("user_helper")->isLogin()==true)
-                throw new Exception("ÒÑ¾­µÇÂ¼ÁË");
+                throw new Exception("å·²ç»ç™»å½•äº†");
             $json=$this->getRequestJson();
             $user_name=$json['user_name'];
             $password=md5($json['user_password']);
             $user_id=$this->helper("user_helper")->checkUserPassword($user_name,$password);
-            if(!$user_id) throw new Exception("ÕËºÅ»òÃÜÂëÌîÐ´´íÎó");
+            if(!$user_id) throw new Exception("è´¦å·æˆ–å¯†ç å¡«å†™é”™è¯¯");
             $this->helper("user_helper")->loginUser($user_id);
             $user_info=$this->helper("user_helper")->getUserInfo();
             $return['avatar']=$user_info['user_avatar'];
@@ -36,20 +36,23 @@ class userAPI extends SlimvcController
     {
         try{
             if($this->helper("user_helper")->isLogin()==true)
-                throw new Exception("ÒÑ¾­µÇÂ¼ÁË");
+                throw new Exception("å·²ç»ç™»å½•äº†");
             $json=$this->getRequestJson();
             $user_name=trim($json['user_name']);
             $password=md5(trim($json['user_password']));
             $nickname=trim($json['nickname']);
+            $avatar=trim($json['avatar']);
             $email=trim($json['email']);
             if(empty($user_name) || empty($password)|| empty($nickname)|| empty($email))
-                throw new Exception("ÐÅÏ¢ÌîÐ´²»ÍêÕû");
-            if(strlen($user_name)>60)   throw new Exception("ÓÃ»§Ãû×î¶à60¸ö×Ö·û");
-            if(strlen($nickname)>60)   throw new Exception("êÇ³Æ×î¶à60¸ö×Ö·û");
-            if(strlen($email)>60)   throw new Exception("ÓÊ¼þµØÖ·×î¶à60¸ö×Ö·û");
-            if($this->model("user_model")->isUserExist($user_name)) throw new Exception("ÓÃ»§ÃûÒÑ´æÔÚ£¡");
-            if(!$this->helper("user_helper")->newUser($user_name,$password,$email,$nickname,$_SERVER['REMOTE_ADDR']))
-                throw new Exception("×¢²áÊ§°Ü£¡");
+                throw new Exception("ä¿¡æ¯å¡«å†™ä¸å®Œæ•´");
+            if(strlen($user_name)>60)   throw new Exception("ç”¨æˆ·åæœ€å¤š60ä¸ªå­—ç¬¦");
+            if(strlen($nickname)>60)   throw new Exception("æ˜µç§°æœ€å¤š60ä¸ªå­—ç¬¦");
+            if(strlen($email)>60)   throw new Exception("é‚®ä»¶åœ°å€æœ€å¤š60ä¸ªå­—ç¬¦");
+            if(strlen($avatar)>300) throw new Exception("å¤´åƒç½‘å€ä¸å¾—å¤šäºŽ300ä¸ªå­—ç¬¦");
+            if($this->model("user_model")->isUserExist($user_name)) throw new Exception("ç”¨æˆ·åå·²å­˜åœ¨ï¼");
+            if(!$user_id=$this->helper("user_helper")->newUser($user_name,$password,$email,$nickname,$_SERVER['REMOTE_ADDR']))
+                throw new Exception("æ³¨å†Œå¤±è´¥ï¼");
+            $this->model("user_model")->updateUserAvatar($user_id,$avatar);
             $return['status']=1;
             $this->outputJson($return);
 
@@ -60,5 +63,9 @@ class userAPI extends SlimvcController
             $return['message']=urlencode($e->getMessage());
             $this->outputJson($return);
         }
+    }
+    function logout()
+    {
+        $this->helper("user_helper")->logoutUser();
     }
 }

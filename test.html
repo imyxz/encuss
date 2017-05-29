@@ -18,114 +18,110 @@
     <title>Encuss test</title>
 </head>
 <body>
+<div style="width: 90%;margin:auto">
+    <div class="encuss-div" data-post-id="3" data-title="" data-url="">
+    </div>
+</div>
 
-<div class="encuss-div" data-post-id="2" data-title="" data-url="">
+<hr />
+<h5>下面这里用来测试，就由得它丑吧（逃</h5>
+<button onclick="logout()">退出登录</button>
+<div>
+    <p>登录：</p>
+    <label><input type="text" placeholder="账号" name="user_name" id="login-user-name"/></label>
+    <label><input type="password" placeholder="密码" name="user_password" id="login-user-password"/></label>
+    <button onclick="login()">登录</button>
+</div>
+<div>
+    <p>注册：</p>
+    <label><input type="text" placeholder="账号" name="user_name" id="register-user-name"/></label>
+    <label><input type="password" placeholder="密码" name="user_password" id="register-user-password"/></label>
+    <label><input type="text" placeholder="邮箱" name="user_password" id="register-user-email"/></label>
+    <label><input type="text" placeholder="昵称" name="user_password" id="register-user-nickname"/></label>
+    <label><input type="text" placeholder="头像网址" name="user_password" id="register-user-avatar"/></label>
+    <button onclick="register()">注册</button>
 </div>
 <script type="text/javascript">
     var encussConfig = {
         short_name:"iweloop",
         site_id:1,
-        is_nest:true,
-        sso: {
-            login: "https://www.iweloop.com/user/loginFromDs/viewing/https%3A%2F%2Fwww.iweloop.com%2F%2Fwatchface%2Fview%2Fid%2F235/",
-            logout: "https://www.iweloop.com/user/logoutFromDs/viewing/https%3A%2F%2Fwww.iweloop.com%2F%2Fwatchface%2Fview%2Fid%2F235/"
-        }
+        is_nest:true
     };
     (function() {
         var encuss = document.createElement('script');
         encuss.type = 'text/javascript';
         encuss.async = true;
-        encuss.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//localhost/encuss/js/embed.js';
+        encuss.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//encuss.yxz.me/js/embed.js?1.2';
         encuss.charset = 'UTF-8';
         (document.getElementsByTagName('head')[0]
         || document.getElementsByTagName('body')[0]).appendChild(encuss);
     })();
+    function login()
+    {
+        var ajax=new XMLHttpRequest();
+        var json_obj=new Object();
+        json_obj.user_name=document.getElementById("login-user-name").value;
+        json_obj.user_password=document.getElementById("login-user-password").value;
+        ajax.open("POST","http://encuss.yxz.me/userAPI/login",true);
+        ajax.onreadystatechange=function(){
+            if (ajax.readyState==4 && ajax.status==200)
+            {
+                var response=JSON.parse(ajax.responseText);
+                if(response.status==1)
+                {
+                    alert("登录成功！");
+                    location.reload();
+                }
+                else
+                {
+                    alert(decodeURI(response.message));
+                }
+            }
+        };
+        ajax.send(JSON.stringify(json_obj));
+    }
+    function logout()
+    {
+        var ajax=new XMLHttpRequest();
+        var json_obj=new Object();
+        ajax.open("POST","http://encuss.yxz.me/userAPI/logout",true);
+        ajax.onreadystatechange=function(){
+            if (ajax.readyState==4 && ajax.status==200)
+            {
+                alert("登出成功！");
+                location.reload();
+            }
+        };
+        ajax.send(JSON.stringify(json_obj));
+    }
+    function register()
+    {
+        var ajax=new XMLHttpRequest();
+        var json_obj=new Object();
+        json_obj.user_name=document.getElementById("register-user-name").value;
+        json_obj.user_password=document.getElementById("register-user-password").value;
+        json_obj.email=document.getElementById("register-user-email").value;
+        json_obj.nickname=document.getElementById("register-user-nickname").value;
+        json_obj.avatar=document.getElementById("register-user-avatar").value;
+        ajax.open("POST","http://encuss.yxz.me/userAPI/register",true);
+        ajax.onreadystatechange=function(){
+            if (ajax.readyState==4 && ajax.status==200)
+            {
+                var response=JSON.parse(ajax.responseText);
+                if(response.status==1)
+                {
+                    alert("注册成功！");
+                    location.reload();
+                }
+                else
+                {
+                    alert(decodeURI(response.message));
+                }
+            }
+        };
+        ajax.send(JSON.stringify(json_obj));
+    }
 </script>
-<!--
-<div style="display: none">
-    <div class="encuss-comments">
-        <div class="encuss-comments-node">
-            <img class="encuss-avatar" src="http://wx.qlogo.cn/mmopen/ibdbgXWjCJE8gSFTcq345782TD97q6nkXjBoswqVXGSXwtJGvaOibVH5gOIdr9ORYwyZJZDsHc3Qibib3rWBPUtS7YZGVzs37Hibia/0">
-            <span class="encuss-username">漠然</span>
-            <span class="encuss-comment-content">
-                吼啊支持啊
-            </span>
-            <span class="encuss-comment-time">
-                5月28日
-            </span>
-            <span class="encuss-comment-action">
-                <a href="#">回复</a>
-                <a href="#">顶</a>
-            </span>
-        </div>
-        <div class="encuss-comments-node">
-            <img class="encuss-avatar" src="http://wx.qlogo.cn/mmopen/ibdbgXWjCJE8gSFTcq345782TD97q6nkXjBoswqVXGSXwtJGvaOibVH5gOIdr9ORYwyZJZDsHc3Qibib3rWBPUtS7YZGVzs37Hibia/0">
-            <span class="encuss-username">漠然</span>
-            <span class="encuss-comment-content">
-                吼啊支持啊
-            </span>
-            <span class="encuss-comment-time">
-                5月28日
-            </span>
-            <span class="encuss-comment-action">
-                <a href="#">回复</a>
-                <a href="#">顶</a>
-            </span>
-        </div>
-        <div class="encuss-comments-node">
-            <img class="encuss-avatar" src="http://wx.qlogo.cn/mmopen/ibdbgXWjCJE8gSFTcq345782TD97q6nkXjBoswqVXGSXwtJGvaOibVH5gOIdr9ORYwyZJZDsHc3Qibib3rWBPUtS7YZGVzs37Hibia/0">
-            <span class="encuss-username">漠然</span>
-            <span class="encuss-comment-content">
-                吼啊支持啊
-            </span>
-            <span class="encuss-comment-time">
-                5月28日
-            </span>
-            <span class="encuss-comment-action">
-                <a href="#">回复</a>
-                <a href="#">顶</a>
-            </span>
-        </div>
-        <div class="encuss-comments-node">
-            <img class="encuss-avatar" src="http://wx.qlogo.cn/mmopen/ibdbgXWjCJE8gSFTcq345782TD97q6nkXjBoswqVXGSXwtJGvaOibVH5gOIdr9ORYwyZJZDsHc3Qibib3rWBPUtS7YZGVzs37Hibia/0">
-            <span class="encuss-username">漠然</span>
-            <span class="encuss-comment-content">
-                吼啊支持啊
-            </span>
-            <span class="encuss-comment-time">
-                5月28日
-            </span>
-            <span class="encuss-comment-action">
-                <a href="#">回复</a>
-                <a href="#">顶</a>
-            </span>
-        </div>
-        <div class="encuss-comments-node">
-            <img class="encuss-avatar" src="http://wx.qlogo.cn/mmopen/ibdbgXWjCJE8gSFTcq345782TD97q6nkXjBoswqVXGSXwtJGvaOibVH5gOIdr9ORYwyZJZDsHc3Qibib3rWBPUtS7YZGVzs37Hibia/0">
-            <span class="encuss-username">漠然</span>
-            <span class="encuss-comment-content">
-                吼啊支持啊
-            </span>
-            <span class="encuss-comment-time">
-                5月28日
-            </span>
-            <span class="encuss-comment-action">
-                <a href="#">回复</a>
-                <a href="#">顶</a>
-            </span>
-        </div>
-    </div>
-    <div class="encuss-replybox" data-parent-id="0">
-        <img class="encuss-avatar" src="http://wx.qlogo.cn/mmopen/ibdbgXWjCJE8gSFTcq345782TD97q6nkXjBoswqVXGSXwtJGvaOibVH5gOIdr9ORYwyZJZDsHc3Qibib3rWBPUtS7YZGVzs37Hibia/0">
-        <div class="encuss-replybox-area">
-            <label><textarea placeholder="说点什么吧......"></textarea></label>
-        </div>
-        <div class="encuss-replybox-action">
-            <button class="encuss-reply-button">发布</button>
-        </div>
-    </div>
-</div>
--->
 
 </body>
 </html>

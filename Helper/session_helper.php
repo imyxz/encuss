@@ -27,6 +27,7 @@ class session_helper extends SlimvcHelper
             $this->session_key=$tmp['session_pass'];
         }
         $this->updateSessionCookieTime();
+        header('P3P: "DSP IDC CUR ADM DELi STP NAV COM UNI INT PHY DEM"');
 
     }
     function __destruct()
@@ -64,13 +65,13 @@ class session_helper extends SlimvcHelper
         {
             if(substr($key,0,15)=='encuss_session_')
             {
-                setcookie($key,'',1,'/');
+                setcookie($key,'',1,'/',".yxz.me");
             }
         }
     }
     private function updateSessionCookieTime()
     {
-        setcookie('encuss_session_' . $this->session_id,$this->session_key,time()+60*self::SESSION_MINUTE,'/');
+        setcookie('encuss_session_' . $this->session_id,$this->session_key,time()+60*self::SESSION_MINUTE,'/',".yxz.me");
         $this->model("session_model")->renewSessionTime($this->session_id,self::SESSION_MINUTE);
     }
     private function getSession()

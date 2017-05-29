@@ -16,4 +16,4 @@ $Config['User'] = 'root';
 $Config['Password'] = '';
 $Config['DBname'] = 'encuss';
 
-$_SERVER['REQUEST_URI']=str_replace("encuss/","",$_SERVER['REQUEST_URI']);
+//$_SERVER['REQUEST_URI']=str_replace("encuss/","",$_SERVER['REQUEST_URI']);

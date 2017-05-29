@@ -157,6 +157,21 @@
     position:absolute;
     right:0;
 }
+.encuss-reply-smiles-button{
+    height:28px;
+    width:28px;
+    margin:1px;
+    margin-left:6px;
+    background-image: url("../img/emotion.png");
+    background-repeat: no-repeat;
+    background-size:24px 24px;
+    background-position: center;
+    display: inline-block;
+
+}
+.encuss-reply-smiles-button:hover{
+    cursor: pointer;
+}
 .encuss-reply-button{
     background-color: #e6e6e6;
     margin: 0;
@@ -166,8 +181,34 @@
     width: 130px;
     font-weight: bold;
     font-size: 14px;
+    display: inline-block;
 }
 .encuss-reply-button:hover{
     background-color: antiquewhite;
 
+}
+.encuss-smiles-selector{
+    position:absolute;
+    padding:10px;
+    max-width:300px;
+    max-height:200px;
+    display:block;
+    background-color: ghostwhite;
+    border-radius: 5px;
+    border-style: solid;
+    border-width: 1px;
+    border-color:lightgrey;
+    top:36px;
+    left:10px;
+    z-index: 10;
+    overflow-y: auto;
+}
+.encuss-smiles-icon{
+    display:inline-block;
+    padding: 1px;
+    max-width: 64px;
+    max-height: 64px;
+}
+.encuss-smiles-icon:hover{
+    cursor: pointer;
 }
