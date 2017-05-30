@@ -52,7 +52,7 @@ class userAPI extends SlimvcController
             if($this->model("user_model")->isUserExist($user_name)) throw new Exception("用户名已存在！");
             if(!$user_id=$this->helper("user_helper")->newUser($user_name,$password,$email,$nickname,$_SERVER['REMOTE_ADDR']))
                 throw new Exception("注册失败！");
-            $this->model("user_model")->updateUserAvatar($user_id,$avatar);
+            $this->helper("user_helper")->updateUserAvatar($user_id,$avatar);
             $return['status']=1;
             $this->outputJson($return);
 
@@ -73,23 +73,36 @@ class userAPI extends SlimvcController
         $redirect_uri="http://encuss.yxz.me/userAPI/loginFromQQAuth/";
         $redirect_uri=urlencode($redirect_uri);
         $state=rand(1000,9999);
+
         $this->helper("session_helper")->set("qq_login_state",$state);
-        $this->helper("session_helper")->set("qq_login_jump",substr(trim($_GET['viewing']),300));
+        if(isset($_GET['viewing']))
+            $jump=$_GET['viewing'];
+        else
+            $jump=urlencode($_SERVER['HTTP_REFERER']);
+        $jump=substr($jump,0,250);
+        $this->helper("session_helper")->set("qq_login_jump",$jump);
         header('Cache-control: private, must-revalidate');
         header("Location: " ."https://graph.qq.com/oauth2.0/authorize?response_type=code&client_id=101405718&redirect_uri=$redirect_uri&state=$state");
     }
     function loginFromQQAuth()
     {
+        global $Config;
         $state=$_GET['state'];
         $code=$_GET['code'];
-        if(empty($state) || $state!=$this->helper("session_helper")->get("qq_login_state"))
+        $client_id=$Config['QQ_connect_client_id'];
+        $client_secure=$Config['QQ_connect_client_secret'];
+        $session_state=$this->helper("session_helper")->get("qq_login_state");
+        $session_jump=$this->helper("session_helper")->get("qq_login_jump");
+        if(empty($state) || $state!=$session_state)
         {
             echo "检测到CSRF攻击行为！";
             return;
         }
+        $this->helper("session_helper")->del("qq_login_state");
+        $this->helper("session_helper")->del("qq_login_jump");
         $redirect_uri="http://encuss.yxz.me/userAPI/loginFromQQAuth/";
         $redirect_uri=urlencode($redirect_uri);
-        $response=@file_get_contents("https://graph.qq.com/oauth2.0/token?grant_type=authorization_code&client_id=101405718&client_secret=9f61edddc96c7aee943555ed8333b8b7&code=$code&redirect_uri=$redirect_uri");
+        $response=@file_get_contents("https://graph.qq.com/oauth2.0/token?grant_type=authorization_code&client_id=$client_id&client_secret=$client_secure&code=$code&redirect_uri=$redirect_uri");
         $response=explode("&",$response);
         $ret=array();
         foreach($response as $one)
@@ -100,10 +113,10 @@ class userAPI extends SlimvcController
                 $ret[$two[0]]=$two[1];
             }
         }
+
         if(!isset($ret['access_token']))
         {
             echo "授权登录错误! " ;
-            var_dump($response);
             return;
         }
         $access_token=$ret['access_token'];
@@ -114,14 +127,29 @@ class userAPI extends SlimvcController
 
         $response=substr($response,strlen("callback( "),strlen($response)-strlen("callback( ")-3);
         $ret=json_decode($response,true);
-        $client_id=$ret['client_id'];
+
+        if(!$ret || empty($ret['openid']))
+        {
+            echo "拉取oepnid失败！";
+            return;
+        }
+
         $openid=$ret['openid'];
 
-        $response=@file_get_contents("https://graph.qq.com/user/get_user_info?access_token=$access_token&oauth_consumer_key=101405718&openid=$openid");
+        $response=@file_get_contents("https://graph.qq.com/user/get_user_info?access_token=$access_token&oauth_consumer_key=$client_id&openid=$openid");
         $response=json_decode($response,true);
         if($response['ret']!=0)
         {
             echo "读取用户信息失败！";
+            return;
+        }
+        if($this->helper("user_helper")->loginByQQ($openid,$access_token,$expires_in,$refresh_token,$response))
+        {
+            header("Location: " . urldecode($session_jump));
+        }
+        else
+        {
+            echo "登录失败！";
             return;
         }
     }

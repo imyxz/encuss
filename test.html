@@ -19,7 +19,7 @@
 </head>
 <body>
 <div style="width: 90%;margin:auto">
-    <div class="encuss-div" data-post-id="3" data-title="" data-url="">
+    <div class="encuss-div" data-post-id="4" data-title="" data-url="">
     </div>
 </div>
 
@@ -51,7 +51,7 @@
         var encuss = document.createElement('script');
         encuss.type = 'text/javascript';
         encuss.async = true;
-        encuss.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//encuss.yxz.me/js/embed.js?1.2';
+        encuss.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//encuss.yxz.me/js/embed.js?1.21';
         encuss.charset = 'UTF-8';
         (document.getElementsByTagName('head')[0]
         || document.getElementsByTagName('body')[0]).appendChild(encuss);
@@ -63,6 +63,7 @@
         json_obj.user_name=document.getElementById("login-user-name").value;
         json_obj.user_password=document.getElementById("login-user-password").value;
         ajax.open("POST","http://encuss.yxz.me/userAPI/login",true);
+        ajax.withCredentials=true;
         ajax.onreadystatechange=function(){
             if (ajax.readyState==4 && ajax.status==200)
             {
@@ -85,6 +86,8 @@
         var ajax=new XMLHttpRequest();
         var json_obj=new Object();
         ajax.open("POST","http://encuss.yxz.me/userAPI/logout",true);
+        ajax.withCredentials=true;
+
         ajax.onreadystatechange=function(){
             if (ajax.readyState==4 && ajax.status==200)
             {
@@ -104,6 +107,8 @@
         json_obj.nickname=document.getElementById("register-user-nickname").value;
         json_obj.avatar=document.getElementById("register-user-avatar").value;
         ajax.open("POST","http://encuss.yxz.me/userAPI/register",true);
+        ajax.withCredentials=true;
+
         ajax.onreadystatechange=function(){
             if (ajax.readyState==4 && ajax.status==200)
             {

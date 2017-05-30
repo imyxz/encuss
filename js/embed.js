@@ -56,14 +56,13 @@ function encussInit()
             else
             {
                 isLogin=false;
+                user_avatar=encuss_basic_url+"img/default_avatar.png";
             }
 
             encuss.appendChild(comment);
-            if(isLogin)
-                encuss.appendChild(createReplyBox(0));
+            encuss.appendChild(createReplyBox(0));
             encuss_comments=document.getElementsByClassName("encuss-div")[0].getElementsByClassName("encuss-comments")[0];
-            if(isLogin)
-                encuss_sub_replybox=createReplyBox(0);
+            encuss_sub_replybox=createReplyBox(0);
             encuss_sub_replybox.style.marginLeft="20px";
             encuss_smiles_selector=createSmilesSelector();
             document.body.appendChild(encuss_smiles_selector);
@@ -179,10 +178,21 @@ function createReplyBox(parent_id)
 <div class="encuss-replybox-action">\
     <div class="encuss-reply-smiles-button"></div>\
     <button class="encuss-reply-button" onclick="submitComment(this)">发布</button>\
+    <img class="encuss-reply-login-byqq"/>\
     </div>';
     ele.dataset.parent_id=parent_id;
     ele.getElementsByClassName("encuss-reply-smiles-button")[0].addEventListener("click",moveSmilesSelector);
     ele.getElementsByClassName("encuss-avatar")[0].src=user_avatar;
+    var img=ele.getElementsByClassName("encuss-reply-login-byqq")[0];
+    img.src=encuss_basic_url + "img/qq_login.png";
+    img.addEventListener("click",function(e){
+        e.stopPropagation();
+        window.location=encuss_basic_url+ "userAPI/loginFromQQ/";
+    });
+    if(isLogin)
+        img.style.display="none";
+    else
+        img.style.display="block";
     return ele;
 }
 function createSmilesSelector()
@@ -279,7 +289,7 @@ function moveRelpyBox(curObj)
     if(commentNode.getElementsByClassName("encuss-comments-node").length==0)//子评论
         commentNode.appendChild(encuss_sub_replybox);
     else
-        commentNode.insertBefore(encuss_sub_replybox,commentNode.getElementsByClassName("encuss-comments-node")[0])//保证刚好插在下面
+        commentNode.insertBefore(encuss_sub_replybox,commentNode.getElementsByClassName("encuss-comments-node")[0]);//保证刚好插在下面
     encuss_sub_replybox.style.display="block";
 }
 function moveSmilesSelector(e)
@@ -290,7 +300,6 @@ function moveSmilesSelector(e)
 }
 function addSmiles(e)
 {
-    console.log(this.parentNode.parentNode);
     var comment_box=this.parentNode.parentNode.parentNode.getElementsByClassName("encuss-replybox-area")[0].getElementsByTagName("textarea")[0];
     comment_box.value=comment_box.value.substr(0,comment_box.selectionStart) + "{:" + this.dataset.smiles_name +":}" + comment_box.value.substring(comment_box.selectionStart);
 }

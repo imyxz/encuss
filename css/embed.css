@@ -157,6 +157,18 @@
     position:absolute;
     right:0;
 }
+.encuss-reply-login-byqq{
+
+}
+.encuss-reply-login-byqq:hover{
+    cursor: pointer;
+}
+.encuss-replybox > .encuss-replybox-action .encuss-reply-login-byqq
+{
+    position:absolute;
+    top:3px;
+    right:0;
+}
 .encuss-reply-smiles-button{
     height:28px;
     width:28px;
@@ -185,6 +197,7 @@
 }
 .encuss-reply-button:hover{
     background-color: antiquewhite;
+    cursor: pointer;
 
 }
 .encuss-smiles-selector{

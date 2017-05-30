@@ -60,6 +60,13 @@ class user_model extends SlimvcModel
             $user_avatar,
             $user_id);
     }
+    function updateUserNickname($user_id,$nickname)
+    {
+        return $this->queryStmt("update user_info set user_nickname=? where user_id=? limit 1",
+            "si",
+            $nickname,
+            $user_id);
+    }
 
 
 

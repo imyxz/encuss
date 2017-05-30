@@ -16,4 +16,7 @@ $Config['User'] = 'root';
 $Config['Password'] = '';
 $Config['DBname'] = 'encuss';
 
+$Config['QQ_connect_client_id']='';
+$Config['QQ_connect_client_secret']='';
+
 $_SERVER['REQUEST_URI']=str_replace("encuss/","",$_SERVER['REQUEST_URI']);

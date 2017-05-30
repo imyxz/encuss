@@ -8,9 +8,9 @@
 class session_helper extends SlimvcHelper
 {
     private $session_info=array();
-    private $session_id;//Èç¹ûÎª0ÔòÎÞÐ§
+    private $session_id;//ï¿½ï¿½ï¿½Îª0ï¿½ï¿½ï¿½ï¿½Ð§
     private $session_key;
-    const SESSION_MINUTE=60*24*30;//Ò»¸öÔÂ
+    const SESSION_MINUTE=60*24*30;//Ò»ï¿½ï¿½ï¿½ï¿½
     function __construct()
     {
         if (!($tmp = $this->getSession())) {
@@ -54,6 +54,10 @@ class session_helper extends SlimvcHelper
     function set($key,$value)
     {
         $this->session_info[$key]=$value;
+    }
+    function del($key)
+    {
+        unset($this->session_info[$key]);
     }
     function &getSessionInfo()
     {
