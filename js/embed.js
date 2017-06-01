@@ -64,8 +64,6 @@ function encussInit()
             encuss_comments=document.getElementsByClassName("encuss-div")[0].getElementsByClassName("encuss-comments")[0];
             encuss_sub_replybox=createReplyBox(0);
             encuss_sub_replybox.style.marginLeft="20px";
-            encuss_smiles_selector=createSmilesSelector();
-            document.body.appendChild(encuss_smiles_selector);
         }
     };
     ajax.send();
@@ -187,7 +185,7 @@ function createReplyBox(parent_id)
     img.src=encuss_basic_url + "img/qq_login.png";
     img.addEventListener("click",function(e){
         e.stopPropagation();
-        window.location=encuss_basic_url+ "userAPI/loginFromQQ/";
+        window.location=encuss_basic_url+ "userAPI/loginFromQQ/site_id/" + site_id +"/";
     });
     if(isLogin)
         img.style.display="none";
@@ -294,6 +292,8 @@ function moveRelpyBox(curObj)
 }
 function moveSmilesSelector(e)
 {
+    if(encuss_smiles_selector==null)
+        encuss_smiles_selector=createSmilesSelector();//在这里载入时减少不必要的流量损耗
     encuss_smiles_selector.style.display="block";
     this.parentNode.appendChild(encuss_smiles_selector);
     e.stopPropagation();

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1,minimum-scale=1.0,maximum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Encuss test</title>
+</head>
+<body>
+<div style="width: 90%;margin:auto">
+    <div class="encuss-div" data-post-id="5" data-title="" data-url="">
+    </div>
+</div>
+
+<script type="text/javascript">
+    var encussConfig = {
+        short_name:"iweloop",
+        site_id:1,
+        is_nest:true
+    };
+    (function() {
+        var encuss = document.createElement('script');
+        encuss.type = 'text/javascript';
+        encuss.async = true;
+        encuss.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//encuss.yxz.me/js/embed.js?1.21';
+        encuss.charset = 'UTF-8';
+        (document.getElementsByTagName('head')[0]
+        || document.getElementsByTagName('body')[0]).appendChild(encuss);
+    })();
+</script>
+
+</body>
+</html>

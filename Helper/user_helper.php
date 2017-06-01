@@ -72,7 +72,7 @@ class user_helper extends SlimvcHelper
         if(!$this->is_login)
         {
             $open_id_info=$this->model("qq_connect_model")->getInfoByOpenID($open_id);
-            if($open_id_info)//说明老用户通过qq互联登入
+            if($open_id_info)//璇存槑鑰佺敤鎴烽�氳繃qq浜掕仈鐧诲叆
             {
                 $user_id=$open_id_info['user_id'];
                 $this->model("qq_connect_model")->updateAllInfoByOpenID($open_id,$user_id,$access_token,$refresh_token,$expires_in,$nickname,json_encode($info));
@@ -82,7 +82,7 @@ class user_helper extends SlimvcHelper
                 $this->loginUser($user_id);
 
             }
-            else//说明新用户通过qq互联登入
+            else//璇存槑鏂扮敤鎴烽�氳繃qq浜掕仈鐧诲叆
             {
                 $user_id=$this->newUser("_qqconnect_" . $open_id,"QQCONNECT","NULL",$nickname,$_SERVER['REMOTE_ADDR']);
                 if($user_id<1)
@@ -96,23 +96,24 @@ class user_helper extends SlimvcHelper
         {
             $open_id_info_by_userid=$this->model("qq_connect_model")->getInfoByUserID($this->user_id);
             $open_id_info_by_openid=$this->model("qq_connect_model")->getInfoByOpenID($open_id);
-            if($open_id_info_by_openid)//说明用户尝试登录另一账号
+            if($open_id_info_by_openid)//璇存槑鐢ㄦ埛灏濊瘯鐧诲綍鍙︿竴璐﹀彿
             {
                 $this->loginUser($open_id_info_by_openid['user_id']);
             }
             else
             {
-                if(!$open_id_info_by_userid)//说明用户在绑定QQ互联
+                if(!$open_id_info_by_userid)//璇存槑鐢ㄦ埛鍦ㄧ粦瀹歈Q浜掕仈
                 {
                     $this->model("qq_connect_model")->newQQConnect($open_id,$this->user_id,$access_token,$refresh_token,$expires_in,$nickname,json_encode($info));
                     $this->updateUserAvatar(0,$avatar);
                     $this->updateUserNickname(0,$nickname);
                 }
-                else//说明用户切换了绑定的QQ互联账号
+                else//璇存槑鐢ㄦ埛鍒囨崲浜嗙粦瀹氱殑QQ浜掕仈璐﹀彿
                 {
-                    //行为暂时禁止
+                    //琛屼负鏆傛椂绂佹
                     return true;
                 }
+
             }
 
         }

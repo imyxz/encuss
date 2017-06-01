@@ -38,14 +38,15 @@ class SlimvcProcessor{
         {
             $this->controllerName=$parameter[0];
             $this->actionName=$parameter[1];
-            for($i=3;$i<count($parameter);$i+=2)//Ìî³äGET²ÎÊı
+            for($i=3;$i<count($parameter);$i+=2)//å¡«å……GETå‚æ•°
             {
                 $_GET[$parameter[$i-1]]=$parameter[$i];
             }
         }
         $this->controllerFilePath=_Controller . $this->controllerName . '.php';
         if(dirname($this->controllerFilePath) . _DS_ !=_Controller)
-            Slimvc::ErrorNotice("Controller Not Exist!");//·ÀÖ¹include²»¸ÃincludeµÄÎÄ¼ş
+            Slimvc::ErrorNotice("Controller Not Exist!");//é˜²æ­¢includeä¸è¯¥includeçš„æ–‡ä»¶
+
         if($Config['Session'])
             session_start();
     }
@@ -192,6 +193,7 @@ class SlimvcModel{
     }
     protected function _log($info,$filename,$line)
     {
+        exit;
         echo "$filename : $line : $info \n";
     }
     private function refArr($arr)

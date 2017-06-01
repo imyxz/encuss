@@ -60,7 +60,7 @@ class commentAPI extends SlimvcController{
             if($post_info)
             {
                 $post_id=$post_info['post_id'];
-                $comments=$this->model("comment_model")->getPostComments($post_id,0,100);
+                $comments=$this->model("comment_model")->getPostComments($post_id,0,1000);
                 foreach($comments as $one)
                 {
                     $return['replys'][$one['comment_id']]=array(
