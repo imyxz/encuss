@@ -7,6 +7,11 @@
  */
 class userAPI extends SlimvcController
 {
+    function __construct()
+    {
+        header('Cache-control: private, must-revalidate');
+
+    }
     function login()
     {
         try{
@@ -90,8 +95,6 @@ class userAPI extends SlimvcController
         $this->helper("session_helper")->set("qq_login_jump",$jump);
         global $Config;
         $client_id=$Config['QQ_connect_client_id'];
-
-        header('Cache-control: private, must-revalidate');
         header("Location: " ."https://graph.qq.com/oauth2.0/authorize?response_type=code&client_id=$client_id&redirect_uri=$redirect_uri&state=$state");
     }
     function loginFromQQAuth()

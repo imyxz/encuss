@@ -1,6 +1,6 @@
 .encuss-div{
     padding:0;
-    margin:0;
+    margin:5px;
     border:0;
 
 }
@@ -20,13 +20,13 @@
 .encuss-comments-node:hover{
     background-color: ghostwhite;
 }
-.encuss-comments > .encuss-comments-node:nth-last-child(1)/*ÊÊÅäÇ¶Ì×»Ø¸´*/
+.encuss-comments > .encuss-comments-node:nth-last-child(1)/*ï¿½ï¿½ï¿½ï¿½Ç¶ï¿½×»Ø¸ï¿½*/
 {
     border-bottom-style: solid;
     border-bottom-width: 1px;
     border-bottom-color: rgba(0, 0, 0, 0.13);
 }
-.encuss-comments > .encuss-comments-node/*ÊÊÅäÇ¶Ì×»Ø¸´*/
+.encuss-comments > .encuss-comments-node/*ï¿½ï¿½ï¿½ï¿½Ç¶ï¿½×»Ø¸ï¿½*/
 {
     padding-bottom:10px;
 }

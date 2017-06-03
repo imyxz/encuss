@@ -11,7 +11,9 @@ var isLogin=false;
 var encuss_sub_replybox;
 var encuss_allreplys=new Object();
 var encuss_smiles=new Object();
-var encuss_basic_url="http://encuss.yxz.me/";
+var encuss_sso_login="";
+var encuss_sso_logout="";
+var encuss_basic_url=(document.location.protocol == 'https:' ? 'https:' : 'http:') + "//encuss.yxz.me/";
 var encuss_smiles_selector;
 encussInit();
 function encussInit()
@@ -20,6 +22,15 @@ function encussInit()
     site_id=encussConfig.site_id;
     var encuss=document.getElementsByClassName("encuss-div")[0];
     site_post_id=encuss.dataset['postId'];
+    if(encussConfig.sso!=null && encussConfig.sso.login!=null)
+    {
+        encuss_sso_login="viewing/" + encodeURIComponent(encussConfig.sso.login) +"/";
+    }
+
+    if(encussConfig.sso!=null && encussConfig.sso.logout!=null)
+    {
+        encuss_sso_logout="viewing/" + encodeURIComponent(encussConfig.sso.logout) +"/";
+    }
     loadSmiles();
     var ajax=new XMLHttpRequest();
     ajax.open("GET",encuss_basic_url+"commentAPI/getPostReplys/site_id/" + site_id + "/site_post_id/" +site_post_id,true);
@@ -185,7 +196,7 @@ function createReplyBox(parent_id)
     img.src=encuss_basic_url + "img/qq_login.png";
     img.addEventListener("click",function(e){
         e.stopPropagation();
-        window.location=encuss_basic_url+ "userAPI/loginFromQQ/site_id/" + site_id +"/";
+        window.location=encuss_basic_url+ "userAPI/loginFromQQ/site_id/" + site_id +"/" + encuss_sso_login;
     });
     if(isLogin)
         img.style.display="none";
