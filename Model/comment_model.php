@@ -9,7 +9,7 @@ class comment_model extends SlimvcModel
 {
     function getPostComments($post_id,$start,$count)
     {
-        return $this->queryStmt("select comment_info.*,user_info.user_id,user_info.user_nickname,user_info.user_avatar from comment_info,user_info where comment_info.post_id=? and user_info.user_id=comment_info.comment_user_id  order by comment_info.comment_id desc limit ?,?",
+        return $this->queryStmt("select comment_info.*,unix_timestamp(comment_info.comment_time) as comment_unix_timestamp,user_info.user_id,user_info.user_nickname,user_info.user_avatar from comment_info,user_info where comment_info.post_id=? and user_info.user_id=comment_info.comment_user_id  order by comment_info.comment_id desc limit ?,?",
             "iii",
             $post_id,
             $start,
@@ -38,6 +38,13 @@ class comment_model extends SlimvcModel
         return $this->queryStmt("update comment_info set comment_status=? where comment_id=?",
             "ii",
             $status,
+            $comment_id);
+    }
+    function updateCommentTime($comment_id,$unix_time)
+    {
+        return $this->queryStmt("update comment_info set comment_time=from_unixtime(?) where comment_id=?",
+            "ii",
+            $unix_time,
             $comment_id);
     }
 }

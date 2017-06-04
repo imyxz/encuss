@@ -71,6 +71,7 @@ class commentAPI extends SlimvcController{
                         "user_avatar"=>$one['user_avatar'],
                         "content"=>$one['comment_content'],
                         "time"=>$one['comment_time'],
+                        "time_stamp"=>$one['comment_unix_timestamp'],
                         "status"=>$one['comment_status']
                     );
                 }

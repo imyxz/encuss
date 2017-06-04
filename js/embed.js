@@ -40,6 +40,13 @@ function encussInit()
             var comment = document.createElement("div");
             comment.className = "encuss-comments";
             var response = JSON.parse(ajax.responseText);
+            response['replys']=obj2Array(response['replys']);//将object转换成array才能排序
+            console.log(response['replys']);
+            response['replys'].sort(function(a,b)
+            {
+                return b.time_stamp - a.time_stamp;
+            });//排序一下
+            console.log(response['replys']);
             for (var index in response['replys']) {
                 encuss_allreplys[response['replys'][index]['comment_id']] = response['replys'][index];
             }
@@ -50,7 +57,7 @@ function encussInit()
             {
                 for(var index in encuss_allreplys)
                 {
-                    if(encuss_allreplys[index].parent_id>0)
+                    if(encuss_allreplys[index].parent_id>0 && encuss_allreplys[encuss_allreplys[index].parent_id]!=null)
                     {
                         encuss_allreplys[index].element.style.marginLeft="20px";
                         encuss_allreplys[encuss_allreplys[index].parent_id].element.appendChild(encuss_allreplys[index].element);
@@ -69,9 +76,8 @@ function encussInit()
                 isLogin=false;
                 user_avatar=encuss_basic_url+"img/default_avatar.png";
             }
-
-            encuss.appendChild(comment);
             encuss.appendChild(createReplyBox(0));
+            encuss.appendChild(comment);
             encuss_comments=document.getElementsByClassName("encuss-div")[0].getElementsByClassName("encuss-comments")[0];
             encuss_sub_replybox=createReplyBox(0);
             encuss_sub_replybox.style.marginLeft="20px";
@@ -269,7 +275,7 @@ function postComment(parent_id,content,replyboxNode)
                 }
                 else
                 {
-                    encuss_comments.appendChild(new_comment);
+                    encuss_comments.insertBefore(new_comment,encuss_comments.firstChild);
                     window.scrollTo(0,new_comment.offsetTop-50);
                 }
 
@@ -313,4 +319,13 @@ function addSmiles(e)
 {
     var comment_box=this.parentNode.parentNode.parentNode.getElementsByClassName("encuss-replybox-area")[0].getElementsByTagName("textarea")[0];
     comment_box.value=comment_box.value.substr(0,comment_box.selectionStart) + "{:" + this.dataset.smiles_name +":}" + comment_box.value.substring(comment_box.selectionStart);
+}
+function obj2Array(obj)
+{
+    var arr=new Array();
+    for(var x in obj)
+    {
+        arr.push(obj[x]);
+    }
+    return arr;
 }
