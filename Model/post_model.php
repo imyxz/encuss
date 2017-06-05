@@ -15,7 +15,7 @@ class post_model extends SlimvcModel{
     }
     function newSitePost($site_id,$site_post_id,$post_user_id,$post_status)
     {
-        if(!$this->queryStmt("insert into post_info set site_id=?,site_post_id=?,post_user_id=?,post_content='',post_time=now(),post_status=?",
+        if(!$this->queryStmt("insert into post_info set site_id=?,site_post_id=?,post_user_id=?,post_content='',post_title='',post_image='',post_url='',post_time=now(),post_status=?",
             "iiii",
             $site_id,
             $site_post_id,

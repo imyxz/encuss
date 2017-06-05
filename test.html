@@ -62,7 +62,7 @@
         var json_obj=new Object();
         json_obj.user_name=document.getElementById("login-user-name").value;
         json_obj.user_password=document.getElementById("login-user-password").value;
-        ajax.open("POST","http://encuss.yxz.me/userAPI/login",true);
+        ajax.open("POST","http://localhost/encuss/userAPI/login",true);
         ajax.withCredentials=true;
         ajax.onreadystatechange=function(){
             if (ajax.readyState==4 && ajax.status==200)
@@ -85,7 +85,7 @@
     {
         var ajax=new XMLHttpRequest();
         var json_obj=new Object();
-        ajax.open("POST","http://encuss.yxz.me/userAPI/logout",true);
+        ajax.open("POST","http://localhost/encuss/userAPI/logout",true);
         ajax.withCredentials=true;
 
         ajax.onreadystatechange=function(){
@@ -106,7 +106,7 @@
         json_obj.email=document.getElementById("register-user-email").value;
         json_obj.nickname=document.getElementById("register-user-nickname").value;
         json_obj.avatar=document.getElementById("register-user-avatar").value;
-        ajax.open("POST","http://encuss.yxz.me/userAPI/register",true);
+        ajax.open("POST","http://localhost/encuss/userAPI/register",true);
         ajax.withCredentials=true;
 
         ajax.onreadystatechange=function(){

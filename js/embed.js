@@ -13,8 +13,9 @@ var encuss_allreplys=new Object();
 var encuss_smiles=new Object();
 var encuss_sso_login="";
 var encuss_sso_logout="";
-var encuss_basic_url=(document.location.protocol == 'https:' ? 'https:' : 'http:') + "//encuss.yxz.me/";
+var encuss_basic_url=(document.location.protocol == 'https:' ? 'https:' : 'http:') + "//localhost/encuss/";
 var encuss_smiles_selector;
+var encuss_message_notice;
 encussInit();
 function encussInit()
 {
@@ -41,12 +42,10 @@ function encussInit()
             comment.className = "encuss-comments";
             var response = JSON.parse(ajax.responseText);
             response['replys']=obj2Array(response['replys']);//将object转换成array才能排序
-            console.log(response['replys']);
             response['replys'].sort(function(a,b)
             {
                 return b.time_stamp - a.time_stamp;
             });//排序一下
-            console.log(response['replys']);
             for (var index in response['replys']) {
                 encuss_allreplys[response['replys'][index]['comment_id']] = response['replys'][index];
             }
@@ -70,6 +69,7 @@ function encussInit()
                 user_nickname=response.nickname;
                 user_avatar=response.avatar;
                 isLogin=true;
+                initMessage();
             }
             else
             {
@@ -328,4 +328,24 @@ function obj2Array(obj)
         arr.push(obj[x]);
     }
     return arr;
+}
+function initMessage()
+{
+    var ajax=new XMLHttpRequest();
+    ajax.open("GET",encuss_basic_url+"messageAPI/getUnreadMessage/",true);
+    ajax.withCredentials=true;
+    ajax.onreadystatechange=function(){
+        if (ajax.readyState==4 && ajax.status==200) {
+            var response=JSON.parse(ajax.responseText);
+            if(response.status==1 && response.unread>0)
+            {
+                encuss_message_notice=document.createElement("div");
+                encuss_message_notice.className="encuss-message-notice";
+                encuss_message_notice.innerHTML="<span></span>";
+                encuss_message_notice.firstChild.innerText="您有 "+response.unread +" 条未读消息";
+                encuss_comments.appendChild(encuss_message_notice);
+            }
+        }
+    };
+    ajax.send();
 }

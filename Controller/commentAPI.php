@@ -19,8 +19,29 @@ class commentAPI extends SlimvcController{
             $post_info=$this->model("post_model")->getPostInfoByPostID($post_id);
             if(!$post_info)
                 throw new Exception("文章不存在");
+            if($parent_id>0) {
+                $parent_comment_info = $this->model("comment_model")->getCommentInfo($parent_id);
+                if (!$parent_comment_info || $parent_comment_info['post_id'] != $post_id)
+                    throw new Exception("父评论不存在！");
+            }
             if(!$comment_id=$this->model("comment_model")->insertComment($post_id,$user_info['user_id'],$parent_id,$content,0))
                 throw new Exception("发表评论失败！");
+            if($post_info['post_user_id']>0)
+            {
+                $this->model("message_model")->insertMessage($post_info['post_user_id'],
+                    "@" . $user_info['user_nickname'] . " 在 " .$post_info['post_title'] . " 给您评论"
+                    ,$post_info['post_url'],0);
+
+            }
+            if($parent_id>0)
+            {
+                $parent_user_info=$this->model("user_model")->getUserInfo($parent_comment_info['comment_user_id']);
+
+                $this->model("message_model")->insertMessage($parent_comment_info['comment_user_id'],
+                    "@" . $parent_user_info['user_nickname'] . " 在 " .$post_info['post_title'] . " 给您的评论回复"
+                    ,$post_info['post_url'],0);
+
+            }
             $return['comment_id']=$comment_id;
             $return['status']=1;
 

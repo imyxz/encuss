@@ -225,3 +225,27 @@
 .encuss-smiles-icon:hover{
     cursor: pointer;
 }
+.encuss-message-notice{
+    display: block;
+    position: fixed;
+    border-radius: 5px;
+    border-style: solid;
+    border-color: rosybrown;
+    border-width: 1px;
+    height:32px;
+    width:100px;
+    padding:2px;
+    right:30px;
+    top:50px;
+    background-color: ghostwhite;
+}
+.encuss-message-notice > span{
+    display: block;
+    margin:auto;
+    line-height: 16px;
+    font-size: 14px;
+    color:indianred;
+}
+.encuss-message-notice > span:hover{
+    cursor: pointer;
+}
