@@ -2,7 +2,7 @@
  * Created by i on 2017/5/24.
  */
 var site_id;
-var site_post_id;
+var site_post_id,site_title,site_url,site_img;
 var post_id;
 var encuss_comments;
 var user_nickname;
@@ -16,13 +16,17 @@ var encuss_sso_logout="";
 var encuss_basic_url=(document.location.protocol == 'https:' ? 'https:' : 'http:') + "//localhost/encuss/";
 var encuss_smiles_selector;
 var encuss_message_notice;
+var encuss_message_viewer;
 encussInit();
 function encussInit()
 {
-    includeCss(encuss_basic_url+"css/embed.css");
+    includeCss(encuss_basic_url+"css/embed.css?20170721");
     site_id=encussConfig.site_id;
     var encuss=document.getElementsByClassName("encuss-div")[0];
     site_post_id=encuss.dataset['postId'];
+    site_url=encuss.dataset['url']!=null?encuss.dataset['url']:'';
+    site_img=encuss.dataset['image']!=null?encuss.dataset['image']:'';
+    site_title=encuss.dataset['title']!=null?encuss.dataset['title']:'';
     if(encussConfig.sso!=null && encussConfig.sso.login!=null)
     {
         encuss_sso_login="viewing/" + encodeURIComponent(encussConfig.sso.login) +"/";
@@ -34,7 +38,10 @@ function encussInit()
     }
     loadSmiles();
     var ajax=new XMLHttpRequest();
-    ajax.open("GET",encuss_basic_url+"commentAPI/getPostReplys/site_id/" + site_id + "/site_post_id/" +site_post_id,true);
+    ajax.open("GET",encuss_basic_url+"commentAPI/getPostReplys/site_id/" + site_id + "/site_post_id/" +site_post_id
+        +"/title/"+encodeURIComponent(site_title)
+        +"/url/"+encodeURIComponent(site_url)
+        +"/image/"+encodeURIComponent(site_img),true);
     ajax.withCredentials=true;
     ajax.onreadystatechange=function(){
         if (ajax.readyState==4 && ajax.status==200) {
@@ -343,9 +350,81 @@ function initMessage()
                 encuss_message_notice.className="encuss-message-notice";
                 encuss_message_notice.innerHTML="<span></span>";
                 encuss_message_notice.firstChild.innerText="您有 "+response.unread +" 条未读消息";
+                encuss_message_notice.firstChild.addEventListener("click",onClickMessageNoticer);
                 encuss_comments.appendChild(encuss_message_notice);
             }
         }
     };
     ajax.send();
+}
+function onClickMessageNoticer(element)
+{
+    if(encuss_message_viewer==null)
+    {
+        var ajax=new XMLHttpRequest();
+        ajax.open("GET",encuss_basic_url+"messageAPI/getMessageDetail/",false);
+        ajax.withCredentials=true;
+        ajax.onreadystatechange=function(){
+            if (ajax.readyState==4 && ajax.status==200) {
+                var response=JSON.parse(ajax.responseText);
+                if(response.status==1)
+                {
+                    encuss_message_viewer=createMessageViewer();
+                    for(var i in response.message)
+                    {
+                        encuss_message_viewer.firstChild.appendChild(createMessageLink(response.message[i]));
+                    }
+                    console.log(encuss_message_viewer);
+                    encuss_message_viewer.style.display="block";
+                    encuss_comments.appendChild(encuss_message_viewer);
+
+                }
+            }
+        };
+        ajax.send();
+    }
+    else
+    {
+        encuss_message_viewer.style.display="block";
+
+    }
+
+
+}
+function createMessageViewer()
+{
+    var ele=document.createElement("div");
+    ele.className="encuss-message-viewer-div";
+    ele.innerHTML='<div class="encuss-message-viewer">\
+    <span class="encuss-message-viewer-closer">x</span>\
+    </div>';
+    ele.getElementsByClassName("encuss-message-viewer-closer")[0].addEventListener("click",onClickMessageViewerCloser);
+    ele.style.display="none";
+    return ele;
+}
+function onClickMessage(element)
+{
+    var ajax=new XMLHttpRequest();
+    var json_obj=new Object();
+    json_obj.message_id=element.target.dataset['message_id'];
+    ajax.open("POST",encuss_basic_url+"messageAPI/onMessageClicked/",false);
+    ajax.withCredentials=true;
+    ajax.onreadystatechange=function(){
+    };
+    ajax.send(JSON.stringify(json_obj));
+}
+function onClickMessageViewerCloser(e)
+{
+    encuss_message_viewer.style.display="none";
+    e.stopPropagation();
+}
+function createMessageLink(message_obj)
+{
+    var ele=document.createElement("a");
+    ele.href=message_obj.url;
+    ele.target="_blank";
+    ele.innerText=message_obj.content;
+    ele.dataset['message_id']=message_obj.id;
+    ele.addEventListener("click",onClickMessage);
+    return ele;
 }

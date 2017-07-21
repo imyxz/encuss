@@ -13,7 +13,7 @@ class messageAPI extends SlimvcController
             if($this->helper("user_helper")->isLogin()==false)
                 throw new Exception("还未登录");
             $user_info=$this->helper("user_helper")->getUserInfo();
-            $message_count=$this->model("message_model")->countUserMessage($user_info['user_id']);
+            $message_count=$this->model("message_model")->countUserUnreadMessage($user_info['user_id']);
             $return['unread']=$message_count;
             $return['status']=1;
             $this->outputJson($return);
@@ -48,7 +48,31 @@ class messageAPI extends SlimvcController
                 if($one['message_id']>$max || $max==-1)
                     $max=$one['message_id'];
             }
-            $this->model("message_model")->setUserRangeMessageStatus($user_id,$min,$max,1);
+            //$this->model("message_model")->setUserRangeMessageStatus($user_id,$min,$max,1);
+            $return['status']=1;
+
+            $this->outputJson($return);
+
+
+        }
+        catch (Exception $e)
+        {
+            $return['status']=0;
+            $return['message']=urlencode($e->getMessage());
+            $this->outputJson($return);
+        }
+    }
+    function onMessageClicked()
+    {
+        $return=array();
+        try{
+            if($this->helper("user_helper")->isLogin()==false)
+                throw new Exception("还未登录");
+            $user_info=$this->helper("user_helper")->getUserInfo();
+            $user_id=$user_info['user_id'];
+            $json=$this->getRequestJson();
+            $message_id=intval($json['message_id']);
+            $this->model("message_model")->setUserMessageStatus($message_id,$user_id,1);
             $return['status']=1;
 
             $this->outputJson($return);

@@ -37,4 +37,13 @@ class post_model extends SlimvcModel{
             "i",
             $post_id)->row();
     }
+    function updatePostInfo($post_id,$title,$url,$image)
+    {
+        return $this->queryStmt("update post_info set post_title=?,post_url=?,post_image=? where post_id=?",
+            "sssi",
+            $title,
+            $url,
+            $image,
+            $post_id);
+    }
 }

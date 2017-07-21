@@ -29,7 +29,7 @@ class commentAPI extends SlimvcController{
             if($post_info['post_user_id']>0)
             {
                 $this->model("message_model")->insertMessage($post_info['post_user_id'],
-                    "@" . $user_info['user_nickname'] . " 在 " .$post_info['post_title'] . " 给您评论"
+                    "@" . $user_info['user_nickname'] . " 在 " .$post_info['post_title'] . " 给您评论：" . substr($content,0,20) . "..."
                     ,$post_info['post_url'],0);
 
             }
@@ -38,7 +38,7 @@ class commentAPI extends SlimvcController{
                 $parent_user_info=$this->model("user_model")->getUserInfo($parent_comment_info['comment_user_id']);
 
                 $this->model("message_model")->insertMessage($parent_comment_info['comment_user_id'],
-                    "@" . $parent_user_info['user_nickname'] . " 在 " .$post_info['post_title'] . " 给您的评论回复"
+                    "@" . $parent_user_info['user_nickname'] . " 在 " .$post_info['post_title'] . " 给您的评论回复：" . substr($content,0,20) . "..."
                     ,$post_info['post_url'],0);
 
             }
@@ -73,6 +73,13 @@ class commentAPI extends SlimvcController{
             }
             $site_post_id=intval($_GET['site_post_id']);
             $site_id=intval($_GET['site_id']);
+            $title=substr(urldecode(@$_GET['title']),0,240);
+            $image=substr(urldecode(@$_GET['image']),0,240);
+            $url=substr(urldecode(@$_GET['url']),0,240);
+            if(substr($url,0,4)!='http')//防止javascript注入
+                $url='';
+            if(substr($image,0,4)!='http')//防止javascript注入
+                $image='';
             $site_info=$this->model("site_model")->getSiteInfoByID($site_id);
             if(!$site_info) throw new Exception("站点不存在");
             $post_info=$this->model("post_model")->getPostInfoBySiteInfo($site_id,$site_post_id);
@@ -103,6 +110,7 @@ class commentAPI extends SlimvcController{
                 $post_id=$this->model("post_model")->newSitePost($site_id,$site_post_id,0,0);
                 if($post_id<=0) throw new Exception("系统出错：无法插入新文章");
             }
+            $this->model("post_model")->updatePostInfo($post_id,$title,$url,$image);
             $return['post_id']=$post_id;
 
             $return['status']=1;

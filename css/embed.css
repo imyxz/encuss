@@ -249,3 +249,46 @@
 .encuss-message-notice > span:hover{
     cursor: pointer;
 }
+.encuss-message-viewer *{
+    margin:0;
+}
+.encuss-message-viewer-div {
+    position:fixed;
+    top:50px;
+    width: 100%;
+    display: block;
+}
+.encuss-message-viewer{
+    margin:0 auto;
+    display:block;
+    position: relative;
+    background-color: white;
+    border-radius: 5px;
+    border-style: solid;
+    border-color: rosybrown;
+    border-width: 1px;
+    padding:8px;
+    width:70%;
+
+}
+.encuss-message-viewer a{
+    display: block;
+    text-decoration: none;
+    font-size: large;
+    color:yellowgreen;
+    margin:5px;
+
+}
+.encuss-message-viewer a:hover{
+    text-decoration: underline;
+}
+.encuss-message-viewer a:visited{
+
+}
+.encuss-message-viewer-closer{
+    position:absolute;
+    right:5px;
+    top:0;
+    cursor: pointer;
+}
+

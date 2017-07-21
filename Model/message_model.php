@@ -32,6 +32,12 @@ class message_model extends SlimvcModel
             "i",
             $user_id)->sum();
     }
+    function countUserUnreadMessage($user_id)
+    {
+        return $this->queryStmt("select message_id from user_message where user_id=? and message_status=0",
+            "i",
+            $user_id)->sum();
+    }
     function setUserMessageStatus($message_id,$user_id,$status)
     {
         return $this->queryStmt("update user_message set message_status=? where message_id=? and user_id=? limit 1",
